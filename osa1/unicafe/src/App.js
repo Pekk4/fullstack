@@ -10,32 +10,41 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
-const Display = ({ text, count, end_char }) => (
-  <p>{text}: {count} {end_char}</p>
+const StatisticLine = ({ text, count, end_char }) => (
+  <tr>
+    <td>{text}</td><td>{count} {end_char}</td>
+  </tr>
 )
 
 const Statistics = ({ statistics }) => {
   const sum = Object.values(statistics).reduce((a, b) => a + b)
   const good = statistics["Good"]
   const bad = statistics["Bad"]
-  const results = [<Header text="Statistics" />]
+  const results = []
 
-  statistics["Average"] = (good + (-1 * bad)) / sum
-  statistics["Percentage"] = (good / sum) * 100
+  statistics["All"] = sum
+  statistics["Average"] = ((good - bad) / sum).toFixed(1)
+  statistics["Positive"] = ((good / sum) * 100).toFixed(1)
 
   if (sum > 0) {
     for (const [key, value] of Object.entries(statistics)) {
-      if (key === "Percentage") {
-        results.push(<Display text={key} count={value} end_char="%" />)
+      if (key === "Positive") {
+        results.push(<StatisticLine key={key} text={key} count={value} end_char="%" />)
       } else {
-        results.push(<Display text={key} count={value} />)
+        results.push(<StatisticLine key={key} text={key} count={value} />)
       }
     }
   } else {
-    results.push(<p>No feedback given</p>)
+    return <p>No feedback given</p>
   }
 
-  return results
+  return (
+    <table>
+      <tbody>
+        {results}
+      </tbody>
+    </table>
+  )
 }
 
 const App = () => {
@@ -54,6 +63,7 @@ const App = () => {
       <Button handleClick={() => setGood(good + 1)} text="Good" />
       <Button handleClick={() => setNeutral(neutral + 1)} text="Neutral" />
       <Button handleClick={() => setBad(bad + 1)} text="Bad" />
+      <Header text="Statistics" />
       <Statistics statistics={statistics} />
     </div>
   )
