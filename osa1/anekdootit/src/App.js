@@ -6,10 +6,16 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
-const AnecdoteView = ({ anecdote }) => (
+const Paragraph = ({ content }) => (
   <p>
-    {anecdote}
+    {content}
   </p>
+)
+
+const Header = ({ text }) => (
+  <h1>
+    {text}
+  </h1>
 )
 
 const App = () => {
@@ -22,15 +28,30 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
   ]
-   
+
   const [selected, setSelected] = useState(0)
   const length = anecdotes.length
+  const [points, setPoints] = useState(new Array(length).fill(0))
+  const copybara = [...points]
+
+  copybara[selected] += 1
+
+  const getTopIndex = (array) => {
+    const max = Math.max(...array)
+    const index = array.indexOf(max)
+  
+    return index
+  }
 
   return (
     <div>
-      <AnecdoteView anecdote={anecdotes[selected]} />
-      <Button  text="Vote this anecdote" />
+      <Header text="Anecdote of the day" />
+      <Paragraph content={anecdotes[selected]} />
+      <Paragraph content={"Has " + points[selected] + " points"} />
+      <Button handleClick={() => setPoints(copybara)} text="Vote this anecdote" />
       <Button handleClick={() => setSelected(Math.floor(Math.random() * length))} text="Generate anecdote" />
+      <Header text="Anecdote with most votes" />
+      <Paragraph content={anecdotes[getTopIndex(points)]} />
     </div>
     
   )
