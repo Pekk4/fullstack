@@ -3,7 +3,7 @@ import Content from './Content'
 const Header = (props) => {
     const { course } = props.course
 
-    return <h1>{course.name}</h1>
+    return <h2>{course.name}</h2>
 }
 
 const Total = (props) => {
