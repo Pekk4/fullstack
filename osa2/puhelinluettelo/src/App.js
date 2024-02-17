@@ -50,7 +50,17 @@ const App = () => {
   const handleKeywordChange = (event) => {
     setNewFilter(event.target.value.toLowerCase())
   }
+  const handleRecordDelete = (record) => {
+    const confirmText = `Do you want to delete ${record.name} from phonebook?`
 
+    if (window.confirm(confirmText)) {
+      recordService
+        .deleteRecord(record.id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== record.id))
+        })
+    }
+  }
   const recordsToShow = newFilter === ''
     ? persons
     : persons.filter(
@@ -72,7 +82,10 @@ const App = () => {
         newNumber={newNumber}
       />
       <h3>Numbers</h3>
-      <Persons records={recordsToShow} />
+      <Persons
+        records={recordsToShow}
+        deleteHandler={handleRecordDelete}
+      />
     </div>
   )
 }
