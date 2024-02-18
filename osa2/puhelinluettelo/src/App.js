@@ -3,13 +3,16 @@ import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import Modal from './components/modal'
 import recordService from './services/records'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     recordService
@@ -45,12 +48,18 @@ const App = () => {
               )
             )
           })
+          .then(() => {
+            notifyOnChange(`Updated ${newName}`)
+          })
       }
     } else {
       recordService
         .create(nameObject)
         .then(response => {
           setPersons(persons.concat(response.data))
+        })
+        .then(() => {
+          notifyOnChange(`Added ${newName}`)
         })
     }
 
@@ -76,7 +85,19 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== record.id))
         })
+        .then(() => {
+          notifyOnChange(`Deleted ${record.name}`)
+        })
     }
+  }
+  const notifyOnChange = (message) => {
+    setErrorMessage(message)
+    setTimeout(
+      () => {
+        setErrorMessage(null)
+      },
+      3000
+    )
   }
   const recordsToShow = newFilter === ''
     ? persons
@@ -88,6 +109,7 @@ const App = () => {
 
   return (
     <div>
+      <Modal message={errorMessage} />
       <h2>Phonebook</h2>
       <Filter handler={handleKeywordChange}/>
       <h3>Add a number</h3>
