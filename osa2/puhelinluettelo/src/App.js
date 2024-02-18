@@ -12,7 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [modalMessage, setmodalMessage] = useState(null)
+  const [modalStyle, setmodalStyle] = useState(null)
 
   useEffect(() => {
     recordService
@@ -51,6 +52,11 @@ const App = () => {
           .then(() => {
             notifyOnChange(`Updated ${newName}`)
           })
+          .catch(error => {
+            const message = `Error ${error.response.status}: ${newName} ` +
+            `has already been removed from server`
+            notifyOnChange(message, true)
+          })
       }
     } else {
       recordService
@@ -88,13 +94,23 @@ const App = () => {
         .then(() => {
           notifyOnChange(`Deleted ${record.name}`)
         })
+        .catch(error => {
+          const message = `Error ${error.response.status}: ${record.name} ` +
+          `has already been removed from server`
+          notifyOnChange(message, true)
+        })
     }
   }
-  const notifyOnChange = (message) => {
-    setErrorMessage(message)
+  const notifyOnChange = (message, isError = false) => {
+    if (isError) {
+      setmodalStyle(true)
+    }
+
+    setmodalMessage(message)
     setTimeout(
       () => {
-        setErrorMessage(null)
+        setmodalMessage(null)
+        setmodalStyle(null)
       },
       3000
     )
@@ -109,7 +125,7 @@ const App = () => {
 
   return (
     <div>
-      <Modal message={errorMessage} />
+      <Modal message={modalMessage} messageStyle={modalStyle} />
       <h2>Phonebook</h2>
       <Filter handler={handleKeywordChange}/>
       <h3>Add a number</h3>
