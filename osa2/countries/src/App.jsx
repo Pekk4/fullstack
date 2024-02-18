@@ -31,7 +31,7 @@ function App() {
   return (
     <>
       <Filter handler={handleKeywordChange} />
-      <Results results={recordsToShow} />
+      <Results results={recordsToShow} handler={handleKeywordChange} />
     </>
   )
 }
