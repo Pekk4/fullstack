@@ -22,23 +22,40 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
 
-    if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
-    } else {
-      const nameObject = {
-        name: newName,
-        number: newNumber
+    const match = persons.find(person => person.name === newName)
+    const nameObject = {
+      name: newName,
+      number: newNumber
+    }
+
+    if (match !== undefined) {
+      const text = `${newName} is already added to phonebook, do you want to ` +
+        `replace the existing number with a new one?`
+      const confirm = window.confirm(text)
+
+      if (confirm) {
+        recordService
+          .update(match.id, nameObject)
+          .then((response) => {
+            setPersons(
+              persons.map(
+                person => person.id !== response.data.id
+                  ? person
+                  : response.data
+              )
+            )
+          })
       }
-  
+    } else {
       recordService
         .create(nameObject)
         .then(response => {
           setPersons(persons.concat(response.data))
         })
-
-      setNewName('')
-      setNewNumber('')
     }
+
+    setNewName('')
+    setNewNumber('')
   }
 
   const handleNameChange = (event) => {
