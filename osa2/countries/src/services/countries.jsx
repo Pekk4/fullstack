@@ -6,6 +6,4 @@ const getAll = () => {
   return axios.get(baseUrl)
 }
 
-export default { 
-  getAll,
-}
+export default { getAll }
