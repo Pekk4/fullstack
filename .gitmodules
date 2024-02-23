@@ -1,0 +1,3 @@
+[submodule "osa3"]
+	path = osa3
+	url = git@github.com:Pekk4/fullstack-part3.git
