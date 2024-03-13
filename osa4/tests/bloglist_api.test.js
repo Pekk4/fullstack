@@ -14,7 +14,7 @@ beforeEach(async() => {
   await Blog.insertMany(helper.initialBlogs)
 })
 
-describe('Bloglist API', () => {
+describe.only('Bloglist API', () => {
   test('returns bloglist as JSON', async () => {
     await api
       .get('/api/blogs')
@@ -26,6 +26,14 @@ describe('Bloglist API', () => {
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
+  })
+
+  test.only('returns objects with "id" property', async () => {
+    const response = await api.get('/api/blogs')
+    const blog = response.body[0]
+
+    assert(Object.hasOwn(blog, 'id'))
+    assert(!Object.hasOwn(blog, '_id'))
   })
 })
 
