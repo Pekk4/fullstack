@@ -52,6 +52,7 @@ const blogs = [
     __v: 0
   }  
 ]
+const listWithOneBlog = [...blogs.slice(0, 1)]
 
 test('dummy returns one', () => {
   const blogs = []
@@ -61,8 +62,6 @@ test('dummy returns one', () => {
 })
 
 describe('total likes', () => {
-  const listWithOneBlog = [...blogs.slice(0, 1)]
-
   test('when list has only one blog equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
     assert.strictEqual(result, listWithOneBlog[0].likes)
@@ -75,5 +74,22 @@ describe('total likes', () => {
   test('of a bigger list is computed right', () => {
     const totalLikes = blogs.reduce((sum, blog) => sum + blog.likes, 0)
     assert.strictEqual(listHelper.totalLikes(blogs), totalLikes)
+  })
+})
+
+describe('Most likes', () => {
+  test('of a bigger list is computed right', () => {
+    const mostLikes = listHelper.favoriteBlog(blogs)
+    assert.strictEqual(mostLikes.likes, 12)
+  })
+
+  test('of empty list is null', () => {
+    assert.strictEqual(listHelper.favoriteBlog([]), null)
+  })
+
+  test('when list has only one blog equals the likes of that', () => {
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    console.log(result)
+    assert.strictEqual(result.likes, 7)
   })
 })
