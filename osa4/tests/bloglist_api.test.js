@@ -70,6 +70,34 @@ describe.only('Bloglist API', () => {
     assert.strictEqual(blogs[0].likes, 0)
     assert.strictEqual(blogs[0].title, newBlog.title)
   })
+
+  test.only('returns 400 if blog title is not given', async () => {
+    await Blog.deleteMany({})
+
+    const newBlogNoTitle = {
+      author: "Paavo Pesusieni",
+      url: "http://example.com"
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogNoTitle)
+      .expect(400)
+  })
+
+  test.only('returns 400 if blog URL is not given', async () => {
+    await Blog.deleteMany({})
+
+    const newBlogNoUrl = {
+      title: "Return of Paavo Pesusieni",
+      author: "Paavo Himself",
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogNoUrl)
+      .expect(400)
+  })
 })
 
 after(async () => {
