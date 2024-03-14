@@ -28,12 +28,29 @@ describe.only('Bloglist API', () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
-  test.only('returns objects with "id" property', async () => {
+  test('returns objects with "id" property', async () => {
     const response = await api.get('/api/blogs')
     const blog = response.body[0]
 
     assert(Object.hasOwn(blog, 'id'))
     assert(!Object.hasOwn(blog, '_id'))
+  })
+
+  test.only('saves added blog into bloglist', async () => {
+    await Blog.deleteMany({})
+
+    const newBlog = helper.singleBlog()
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogs = await helper.blogsInDb()
+
+    assert.strictEqual(blogs.length, 1)
+    assert.strictEqual(blogs[0].title, newBlog.title)
   })
 })
 

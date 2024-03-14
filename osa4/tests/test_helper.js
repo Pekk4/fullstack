@@ -51,6 +51,14 @@ const initialBlogs = [
   }  
 ]
 
+const singleBlog = () => {
+  const blog = {...initialBlogs[0]}
+  delete blog._id
+  delete blog.__v
+
+  return blog
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
 
@@ -59,5 +67,6 @@ const blogsInDb = async () => {
 
 module.exports = {
   initialBlogs,
-  blogsInDb
+  blogsInDb,
+  singleBlog
 }
