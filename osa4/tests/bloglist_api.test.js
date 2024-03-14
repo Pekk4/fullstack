@@ -36,7 +36,7 @@ describe.only('Bloglist API', () => {
     assert(!Object.hasOwn(blog, '_id'))
   })
 
-  test.only('saves added blog into bloglist', async () => {
+  test('saves added blog into bloglist', async () => {
     await Blog.deleteMany({})
 
     const newBlog = helper.singleBlog()
@@ -50,6 +50,24 @@ describe.only('Bloglist API', () => {
     const blogs = await helper.blogsInDb()
 
     assert.strictEqual(blogs.length, 1)
+    assert.strictEqual(blogs[0].title, newBlog.title)
+  })
+
+  test.only('saves blog with 0 likes if property is not given', async () => {
+    await Blog.deleteMany({})
+
+    const newBlog = helper.singleBlog()
+    delete newBlog.likes
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogs = await helper.blogsInDb()
+
+    assert.strictEqual(blogs[0].likes, 0)
     assert.strictEqual(blogs[0].title, newBlog.title)
   })
 })
