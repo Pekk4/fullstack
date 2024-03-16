@@ -53,7 +53,7 @@ describe.only('Bloglist API', () => {
     assert.strictEqual(blogs[0].title, newBlog.title)
   })
 
-  test.only('saves blog with 0 likes if property is not given', async () => {
+  test('saves blog with 0 likes if property is not given', async () => {
     await Blog.deleteMany({})
 
     const newBlog = helper.singleBlog()
@@ -71,7 +71,7 @@ describe.only('Bloglist API', () => {
     assert.strictEqual(blogs[0].title, newBlog.title)
   })
 
-  test.only('returns 400 if blog title is not given', async () => {
+  test('returns 400 if blog title is not given', async () => {
     await Blog.deleteMany({})
 
     const newBlogNoTitle = {
@@ -85,7 +85,7 @@ describe.only('Bloglist API', () => {
       .expect(400)
   })
 
-  test.only('returns 400 if blog URL is not given', async () => {
+  test('returns 400 if blog URL is not given', async () => {
     await Blog.deleteMany({})
 
     const newBlogNoUrl = {
@@ -97,6 +97,20 @@ describe.only('Bloglist API', () => {
       .post('/api/blogs')
       .send(newBlogNoUrl)
       .expect(400)
+  })
+
+  test.only('deletes wanted blog from the list', async () => {
+    const blogs = await helper.blogsInDb()
+    const blog = blogs[0]
+
+    await api
+      .delete(`/api/blogs/${blog.id}`)
+      .expect(204)
+
+    const currentBlogs = await helper.blogsInDb()
+
+    assert(!currentBlogs.includes(blog))
+    assert.strictEqual(currentBlogs.length, helper.initialBlogs.length - 1)
   })
 })
 
