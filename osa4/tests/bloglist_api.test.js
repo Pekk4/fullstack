@@ -99,7 +99,7 @@ describe.only('Bloglist API', () => {
       .expect(400)
   })
 
-  test.only('deletes wanted blog from the list', async () => {
+  test('deletes wanted blog from the list', async () => {
     const blogs = await helper.blogsInDb()
     const blog = blogs[0]
 
@@ -111,6 +111,23 @@ describe.only('Bloglist API', () => {
 
     assert(!currentBlogs.includes(blog))
     assert.strictEqual(currentBlogs.length, helper.initialBlogs.length - 1)
+  })
+
+  test.only('updates wanted blog details', async () => {
+    const blogs = await helper.blogsInDb()
+    const blog = blogs[0]
+    const url = 'https://en.wikipedia.org/wiki/666_(number)'
+
+    blog.likes = 666
+    blog.url = url
+
+    const response = await api
+      .put(`/api/blogs/${blog.id}`)
+      .send(blog)
+      .expect(200)
+
+    assert.strictEqual(response.body.likes, 666)
+    assert.strictEqual(response.body.url, url)
   })
 })
 
