@@ -1,4 +1,4 @@
-const { test, after, describe, beforeEach } = require('node:test')
+const { test, after, describe, beforeEach, before } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -9,12 +9,38 @@ const helper = require('./test_helper')
 
 const api = supertest(app)
 
-beforeEach(async() => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+let apiToken = null
+const initialBlogs = [...helper.initialBlogs]
+
+before(async () => {
+  const newUser = {
+    "username": "Paavo",
+    "name": "Pesusieni",
+    "password": "salasana"
+  }
+  
+  await api
+    .post('/api/users')
+    .send(newUser)
+  
+  const response = await api
+    .post('/api/login')
+    .send(newUser)
+
+  apiToken = response.body.token
+  const users = await helper.usersInDb()
+
+  initialBlogs.forEach(blog => {
+    blog.user = users[0].id
+  })
 })
 
-describe.only('Bloglist API', () => {
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(initialBlogs)
+})
+
+describe('Bloglist API', () => {
   test('returns bloglist as JSON', async () => {
     await api
       .get('/api/blogs')
@@ -43,6 +69,7 @@ describe.only('Bloglist API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${apiToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -61,6 +88,7 @@ describe.only('Bloglist API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${apiToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -81,6 +109,7 @@ describe.only('Bloglist API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${apiToken}`)
       .send(newBlogNoTitle)
       .expect(400)
   })
@@ -95,6 +124,7 @@ describe.only('Bloglist API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${apiToken}`)
       .send(newBlogNoUrl)
       .expect(400)
   })
@@ -105,6 +135,7 @@ describe.only('Bloglist API', () => {
 
     await api
       .delete(`/api/blogs/${blog.id}`)
+      .set('Authorization', `Bearer ${apiToken}`)
       .expect(204)
 
     const currentBlogs = await helper.blogsInDb()
@@ -113,7 +144,7 @@ describe.only('Bloglist API', () => {
     assert.strictEqual(currentBlogs.length, helper.initialBlogs.length - 1)
   })
 
-  test.only('updates wanted blog details', async () => {
+  test('updates wanted blog details', async () => {
     const blogs = await helper.blogsInDb()
     const blog = blogs[0]
     const url = 'https://en.wikipedia.org/wiki/666_(number)'
@@ -128,6 +159,60 @@ describe.only('Bloglist API', () => {
 
     assert.strictEqual(response.body.likes, 666)
     assert.strictEqual(response.body.url, url)
+  })
+
+  test('does not delete without correct API token', async () => {
+    const blog = await helper.blogsInDb()
+    const response = await api
+      .delete(`/api/blogs/${blog[0].id}`)
+      .set('Authorization', `Bearer ${helper.falseToken}`)
+      .expect(401)
+    const currentBlogs = await helper.blogsInDb()
+
+    assert(response.body.error.includes('invalid token'))
+    assert.strictEqual(currentBlogs.length, initialBlogs.length)
+  })
+
+  test('does not delete without authentication', async () => {
+    const blog = await helper.blogsInDb()
+    const response = await api
+      .delete(`/api/blogs/${blog[0].id}`)
+      .expect(400)
+    const currentBlogs = await helper.blogsInDb()
+
+    assert(response.body.error.includes('token missing or invalid'))
+    assert.strictEqual(currentBlogs.length, initialBlogs.length)
+  })
+
+  test('adding a new blog wont work without correct API token', async () => {
+    await Blog.deleteMany({})
+
+    const newBlog = helper.singleBlog()
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${helper.falseToken}`)
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+    const blogs = await helper.blogsInDb()
+
+    assert.strictEqual(blogs.length, 0)
+    assert(response.body.error.includes('invalid token or user not found'))
+  })
+
+  test('adding a new blog wont work without API token at all', async () => {
+    await Blog.deleteMany({})
+
+    const newBlog = helper.singleBlog()
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    const blogs = await helper.blogsInDb()
+
+    assert.strictEqual(blogs.length, 0)
+    assert(response.body.error.includes('token missing or invalid'))
   })
 })
 

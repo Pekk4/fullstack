@@ -52,6 +52,11 @@ const initialBlogs = [
   }  
 ]
 
+const falseToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e'
+  + 'yJ1c2VybmFtZSI6InBhdiIsImlkIjoiNjYwYzQ4YzQyMGY2MzA3YW'
+  + 'JiODYwNTE2IiwiaWF0IjoxNzEyMDgxMDk2LCJleHAiOjE3MTIwODQ'
+  + '2OTZ9.2XTAlsuIKBluACcWDWKzN12DlgPWAaXf3o7cS--wwhk'
+
 const singleBlog = () => {
   const blog = {...initialBlogs[0]}
   delete blog._id
@@ -74,6 +79,7 @@ const usersInDb = async () => {
 
 module.exports = {
   initialBlogs,
+  falseToken,
   blogsInDb,
   singleBlog,
   usersInDb

@@ -77,7 +77,7 @@ describe('When creating a new user', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    assert(Object.hasOwn(response.body, 'passwordHash'))
+    assert(Object.hasOwn(response.body, 'username'))
   })
 
   test('password cannot be empty', async () => {

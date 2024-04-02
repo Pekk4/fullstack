@@ -89,7 +89,6 @@ describe('Most likes', () => {
 
   test('when list has only one blog equals the likes of that', () => {
     const result = listHelper.favoriteBlog(listWithOneBlog)
-    console.log(result)
     assert.strictEqual(result.likes, 7)
   })
 })
