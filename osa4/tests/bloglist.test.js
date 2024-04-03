@@ -92,3 +92,15 @@ describe('Most likes', () => {
     assert.strictEqual(result.likes, 7)
   })
 })
+
+describe.only('Most blogs', () => {
+  test.only('of a bigger list is computed right', () => {
+    const mostBlogs = listHelper.mostBlogs(blogs)
+    assert.strictEqual(mostBlogs.blogs, 3)
+  })
+
+  test.only('of a list with only one blog is computed right', () => {
+    const mostBlogs = listHelper.mostBlogs(listWithOneBlog)
+    assert.strictEqual(mostBlogs.blogs, 1)
+  })
+})
