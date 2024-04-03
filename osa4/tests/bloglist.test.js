@@ -93,14 +93,33 @@ describe('Most likes', () => {
   })
 })
 
-describe.only('Most blogs', () => {
-  test.only('of a bigger list is computed right', () => {
+describe('Most blogs', () => {
+  test('of a bigger list is computed right', () => {
     const mostBlogs = listHelper.mostBlogs(blogs)
     assert.strictEqual(mostBlogs.blogs, 3)
   })
 
-  test.only('of a list with only one blog is computed right', () => {
+  test('of a list with only one blog is computed right', () => {
     const mostBlogs = listHelper.mostBlogs(listWithOneBlog)
     assert.strictEqual(mostBlogs.blogs, 1)
+  })
+})
+
+describe('Most likes', () => {
+  test('of a bigger list is computed right', () => {
+    const mostLikes = listHelper.mostLikes(blogs)
+    assert.strictEqual(mostLikes.likes, 17)
+  })
+
+  test('of a list with only one author is computed right', () => {
+    const newBlogs = [...blogs.slice(3,6)]
+
+    const mostLikes = listHelper.mostLikes(newBlogs)
+    assert.strictEqual(mostLikes.likes, 12)
+  })
+
+  test('of a list with only one blog is computed right', () => {
+    const mostLikes = listHelper.mostLikes(listWithOneBlog)
+    assert.strictEqual(mostLikes.likes, 7)
   })
 })
