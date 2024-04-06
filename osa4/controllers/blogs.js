@@ -23,10 +23,11 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     return response.status(401).json({ error: 'invalid token or user not found' })
   }
 
+  body.user = user._id
+
   const blog = new Blog(body)
   const savedBlog = await blog.save()
 
-  body.user = user._id
   user.blogs = user.blogs.concat(savedBlog._id)
 
   await user.save()
