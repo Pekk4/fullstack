@@ -4,6 +4,8 @@ import loginService from './services/login'
 import BlogsList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Modal from './components/Modal'
+import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +15,8 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
   const [user, setUser] = useState(null)
+  const [modalMessage, setmodalMessage] = useState(null)
+  const [modalStyle, setmodalStyle] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -48,14 +52,18 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      console.log(exception)
+      notifyOnChange(`Logged in as '${user.username}'`)
+    } catch (error) {
+      notifyOnChange('Wrong username or password!', true)
     }
   }
 
   const handleLogout = () => {
+    const username = user.username
+
     window.localStorage.removeItem('loggedUser')
     setUser(null)
+    notifyOnChange(`Logged out '${username}'! Goodbye!`)
   }
 
   const handleBlogSubmit = async (event) => {
@@ -73,6 +81,7 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setBlogUrl('')
+    notifyOnChange(`A new blog '${title}' by '${author}' added!`)
   }
 
   const getLoginForm = () => (
@@ -105,8 +114,24 @@ const App = () => {
     />
   )
 
+  const notifyOnChange = (message, isError = false) => {
+    if (isError) {
+      setmodalStyle(true)
+    }
+
+    setmodalMessage(message)
+    setTimeout(
+      () => {
+        setmodalMessage(null)
+        setmodalStyle(null)
+      },
+      3000
+    )
+  }
+
   return (
     <div>
+      <Modal message={modalMessage} messageStyle={modalStyle} />
       {!user && getLoginForm()}
       {user && getBlogList()}
       <br />
