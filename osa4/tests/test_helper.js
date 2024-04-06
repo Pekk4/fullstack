@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -52,10 +53,14 @@ const initialBlogs = [
   }  
 ]
 
-const falseToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e'
-  + 'yJ1c2VybmFtZSI6InBhdiIsImlkIjoiNjYwYzQ4YzQyMGY2MzA3YW'
-  + 'JiODYwNTE2IiwiaWF0IjoxNzEyMDgxMDk2LCJleHAiOjE3MTIwODQ'
-  + '2OTZ9.2XTAlsuIKBluACcWDWKzN12DlgPWAaXf3o7cS--wwhk'
+const falseToken = jwt.sign(
+  {
+    username: 'Voldemort',
+    id: '666136661366613666136661',
+  },
+  process.env.SECRET,
+  { expiresIn: 60*60 }
+)
 
 const singleBlog = () => {
   const blog = {...initialBlogs[0]}
