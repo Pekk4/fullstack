@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Modal from './components/Modal'
 import './index.css'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -103,15 +104,17 @@ const App = () => {
   )
 
   const getBlogForm = () => (
-    <BlogForm
-      title={title}
-      titleHandler={setTitle}
-      author={author}
-      authorHandler={setAuthor}
-      blogUrl={blogUrl}
-      blogUrlHandler={setBlogUrl}
-      blogSubmitHandler={handleBlogSubmit}
-    />
+    <Togglable buttonLabel='New blog'>
+      <BlogForm
+        title={title}
+        titleHandler={setTitle}
+        author={author}
+        authorHandler={setAuthor}
+        blogUrl={blogUrl}
+        blogUrlHandler={setBlogUrl}
+        blogSubmitHandler={handleBlogSubmit}
+      />
+    </Togglable>
   )
 
   const notifyOnChange = (message, isError = false) => {
