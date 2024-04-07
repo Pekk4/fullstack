@@ -1,20 +1,39 @@
-const Modal = ({ message, messageStyle }) => {
-  let modalClass = "modal green"
+import { useState, useImperativeHandle, forwardRef } from 'react'
 
-  if (message === null) {
-      return null
+const Modal = forwardRef((props, ref) => {
+  const [modalMessage, setmodalMessage] = useState(null)
+  const [modalStyle, setmodalStyle] = useState(null)
+
+  const setMessage = (message) => {
+    setmodalMessage(message)
   }
-  if (messageStyle !== null) {
-      modalClass = "modal red"
+  const setStyle = (style) => {
+    setmodalStyle(style)
+  }
+
+  useImperativeHandle(ref, () => {
+    return {
+      setMessage,
+      setStyle
+    }
+  })
+
+  let modalClass = 'modal green'
+
+  if (modalMessage === null) {
+    return null
+  }
+  if (modalStyle !== null) {
+    modalClass = 'modal red'
   }
 
   return (
-      <div className="container">
-          <div className={modalClass}>
-              {message}
-          </div>
+    <div className='container'>
+      <div className={modalClass}>
+        {modalMessage}
       </div>
+    </div>
   )
-}
+})
 
 export default Modal

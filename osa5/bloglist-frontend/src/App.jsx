@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogsList from './components/BlogList'
@@ -12,12 +12,9 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
   const [user, setUser] = useState(null)
-  const [modalMessage, setmodalMessage] = useState(null)
-  const [modalStyle, setmodalStyle] = useState(null)
+
+  const modalRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -67,22 +64,13 @@ const App = () => {
     notifyOnChange(`Logged out '${username}'! Goodbye!`)
   }
 
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault()
-
-    const newBlog = {
-      title: title,
-      author: author,
-      url: blogUrl
-    }
-
+  const submitBlog = async (newBlog) => {
     const response = await blogService.create(newBlog)
 
     setBlogs(blogs.concat(response))
-    setTitle('')
-    setAuthor('')
-    setBlogUrl('')
-    notifyOnChange(`A new blog '${title}' by '${author}' added!`)
+    notifyOnChange(
+      `A new blog '${response.title}' by '${response.author}' added!`
+    )
   }
 
   const getLoginForm = () => (
@@ -106,27 +94,21 @@ const App = () => {
   const getBlogForm = () => (
     <Togglable buttonLabel='New blog'>
       <BlogForm
-        title={title}
-        titleHandler={setTitle}
-        author={author}
-        authorHandler={setAuthor}
-        blogUrl={blogUrl}
-        blogUrlHandler={setBlogUrl}
-        blogSubmitHandler={handleBlogSubmit}
+        createBlog={submitBlog}
       />
     </Togglable>
   )
 
   const notifyOnChange = (message, isError = false) => {
     if (isError) {
-      setmodalStyle(true)
+      modalRef.current.setStyle(true)
     }
 
-    setmodalMessage(message)
+    modalRef.current.setMessage(message)
     setTimeout(
       () => {
-        setmodalMessage(null)
-        setmodalStyle(null)
+        modalRef.current.setMessage(null)
+        modalRef.current.setStyle(null)
       },
       3000
     )
@@ -134,7 +116,7 @@ const App = () => {
 
   return (
     <div>
-      <Modal message={modalMessage} messageStyle={modalStyle} />
+      <Modal ref={modalRef} />
       {!user && getLoginForm()}
       {user && getBlogList()}
       <br />
