@@ -73,6 +73,12 @@ const App = () => {
     )
   }
 
+  const updateBlog = async (blogBody) => {
+    const response = await blogService.update(blogBody)
+
+    setBlogs(blogs.map(blog => blog.id !== response.id ? blog : response))
+  }
+
   const getLoginForm = () => (
     <LoginForm
       username={username}
@@ -88,6 +94,7 @@ const App = () => {
       user={user}
       logoutHandler={handleLogout}
       blogs={blogs}
+      likeHandler={updateBlog}
     />
   )
 

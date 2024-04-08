@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeHandler }) => {
   const [detailedView, setDetailedView] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -12,6 +12,18 @@ const Blog = ({ blog }) => {
 
   const toggleView = () => {
     setDetailedView(!detailedView)
+  }
+
+  const addLike = () => {
+    const blogBody = {
+      id: blog.id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes+1
+    }
+
+    likeHandler(blogBody)
   }
 
   if (!detailedView) {
@@ -34,7 +46,7 @@ const Blog = ({ blog }) => {
           <br />
           {blog.url}
           <br />
-          Likes {blog.likes} <button>Like</button>
+          Likes {blog.likes} <button onClick={addLike}>Like</button>
           <br />
           {blog.user.name}
         </p>
