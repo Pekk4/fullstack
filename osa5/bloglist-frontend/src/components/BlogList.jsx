@@ -7,9 +7,12 @@ const BlogsList = ({ user, logoutHandler, likeHandler, blogs }) => (
       {user.username} logged in{' '}
       <button onClick={logoutHandler}>logout</button>
     </p>
-    {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} likeHandler={likeHandler} />
-    )}
+    {blogs
+      .sort((a, b) => b.likes > a.likes ? 1 : -1)
+      .map(blog =>
+        <Blog key={blog.id} blog={blog} likeHandler={likeHandler} />
+      )
+    }
   </div>
 )
 
