@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, likeHandler }) => {
+const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   const [detailedView, setDetailedView] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -26,6 +26,10 @@ const Blog = ({ blog, likeHandler }) => {
     likeHandler(blogBody)
   }
 
+  const deleteBlog = blog => {
+    deleteHandler(blog)
+  }
+
   if (!detailedView) {
     return (
       <div style={blogStyle}>
@@ -49,6 +53,11 @@ const Blog = ({ blog, likeHandler }) => {
           Likes {blog.likes} <button onClick={addLike}>Like</button>
           <br />
           {blog.user.name}
+        </p>
+        <p>
+          {blog.user.username === user.username &&
+            <button onClick={() => {deleteBlog(blog)}}>Remove</button>
+          }
         </p>
       </div>
     )

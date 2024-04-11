@@ -79,6 +79,19 @@ const App = () => {
     setBlogs(blogs.map(blog => blog.id !== response.id ? blog : response))
   }
 
+  const deleteBlog = async blog => {
+    const confirm = `Remove blog '${blog.title}' by '${blog.author}'?`
+
+    if (window.confirm(confirm)) {
+      const response = await blogService.deleteBlog(blog.id)
+
+      if (response.status === 204) {
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        notifyOnChange(`'${blog.title}' removed succesfully!`)
+      }
+    }
+  }
+
   const getLoginForm = () => (
     <LoginForm
       username={username}
@@ -95,6 +108,7 @@ const App = () => {
       logoutHandler={handleLogout}
       blogs={blogs}
       likeHandler={updateBlog}
+      deleteHandler={deleteBlog}
     />
   )
 
