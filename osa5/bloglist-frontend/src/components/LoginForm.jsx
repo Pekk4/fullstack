@@ -3,7 +3,7 @@ const LoginForm = ( props ) => (
     <h2>Login</h2>
     <form onSubmit={props.loginHandler}>
       <div>
-        Username: 
+        Username:
         <input
           type='text'
           value={props.username}

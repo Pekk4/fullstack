@@ -36,4 +36,6 @@ const Modal = forwardRef((props, ref) => {
   )
 })
 
+Modal.displayName = 'Modal'
+
 export default Modal
