@@ -3,11 +3,10 @@ import { useState } from 'react'
 const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   const [detailedView, setDetailedView] = useState(false)
   const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
+    padding: 10,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    margin: 5
   }
 
   const toggleView = () => {
@@ -33,32 +32,28 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   if (!detailedView) {
     return (
       <div style={blogStyle}>
-        <p>
-          {blog.title}{' '}
-          {blog.author}{' '}
+        <div>
+          {blog.title} {blog.author}{' '}
           <button onClick={toggleView}>View</button>
-        </p>
+        </div>
       </div>
     )
   } else {
     return (
       <div style={blogStyle}>
-        <p>
-          {blog.title}{' '}
-          {blog.author}{' '}
-          <button onClick={toggleView}>Cancel</button>
-          <br />
-          {blog.url}
-          <br />
-          Likes {blog.likes} <button onClick={addLike}>Like</button>
-          <br />
-          {blog.user.name}
-        </p>
-        <p>
-          {blog.user.username === user.username &&
-            <button onClick={() => {deleteBlog(blog)}}>Remove</button>
-          }
-        </p>
+        <div>
+          {blog.title} {blog.author}{' '}
+          <button onClick={toggleView}>Hide</button>
+        </div>
+        <div>{blog.url}</div>
+        <div>
+          Likes {blog.likes}{' '}
+          <button onClick={addLike}>Like</button>
+        </div>
+        <div>{blog.user.name}</div>
+        {blog.user.username === user.username &&
+          <button onClick={() => {deleteBlog(blog)}}>Remove</button>
+        }
       </div>
     )
   }
