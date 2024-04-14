@@ -109,6 +109,47 @@ describe('Blog app', () => {
         await expandViewButton.click()
         await expect(blogEntry.locator(':text("Remove")')).toBeHidden()
       })
+
+      test('blogs are sorted by likes', async ({ page, request }) => {
+        await request.post('/api/testing/createmany')
+        await page.reload()
+
+        const lastBlog = page.locator(':text("Test blog 1")').locator('..')
+        await lastBlog.locator(':text("View")').click()
+        await lastBlog.locator(':text("Likes 0")').waitFor()
+
+        for (let i = 0; i < 3; i++) {
+          await lastBlog.locator(':text("Like")').click()
+
+          await lastBlog.locator(`:text("Likes ${i+1}")`).waitFor()
+        }
+
+        const middleBlog = page.locator(':text("Test blog 2")').locator('..')
+        await middleBlog.locator(':text("View")').click()
+        await middleBlog.locator(':text("Likes 0")').waitFor()
+
+        for (let i = 0; i < 2; i++) {
+          await middleBlog.locator(':text("Like")').click()
+          await middleBlog.locator(`:text("Likes ${i+1}")`).waitFor()
+        }
+
+        await page.reload()
+        await page.locator(`:text("Test blog 1")`).waitFor()
+
+        const currentOrder = page.locator('.blog')
+
+        await currentOrder.first().locator(':text("View")').click()
+        await expect(currentOrder.first().locator(':text("Likes 3")')).toBeVisible()
+        await expect(currentOrder.first().locator(':text("Test blog 1")')).toBeVisible()
+
+        await currentOrder.nth(1).locator(':text("View")').click()
+        await expect(currentOrder.nth(1).locator(':text("Likes 2")')).toBeVisible()
+        await expect(currentOrder.nth(1).locator(':text("Test blog 2")')).toBeVisible()
+
+        await currentOrder.last().locator(':text("View")').click()
+        await expect(currentOrder.last().locator(':text("Likes 0")')).toBeVisible()
+        await expect(currentOrder.last().locator(':text("Test blog 3")')).toBeVisible()
+      })
     })
   })
 })

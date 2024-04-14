@@ -31,29 +31,33 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
 
   if (!detailedView) {
     return (
-      <div style={blogStyle}>
-        <div>
-          {blog.title} {blog.author}{' '}
-          <button onClick={toggleView}>View</button>
+      <div className='blog'>
+        <div style={blogStyle}>
+          <div>
+            {blog.title} {blog.author}{' '}
+            <button onClick={toggleView}>View</button>
+          </div>
         </div>
       </div>
     )
   } else {
     return (
-      <div style={blogStyle}>
-        <div>
-          {blog.title} {blog.author}{' '}
-          <button onClick={toggleView}>Hide</button>
+      <div className='blog'>
+        <div style={blogStyle}>
+          <div>
+            {blog.title} {blog.author}{' '}
+            <button onClick={toggleView}>Hide</button>
+          </div>
+          <div>{blog.url}</div>
+          <div>
+            Likes {blog.likes}{' '}
+            <button onClick={addLike}>Like</button>
+          </div>
+          <div>{blog.user.name}</div>
+          {blog.user.username === user.username &&
+            <button onClick={deleteBlog}>Remove</button>
+          }
         </div>
-        <div>{blog.url}</div>
-        <div>
-          Likes {blog.likes}{' '}
-          <button onClick={addLike}>Like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        {blog.user.username === user.username &&
-          <button onClick={deleteBlog}>Remove</button>
-        }
       </div>
     )
   }
