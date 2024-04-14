@@ -81,19 +81,33 @@ describe('Blog app', () => {
         await expect(page.getByText(blog.title)).toBeVisible()
       })
 
-      test('a blog can be liked', async ({ page }) => {
+      test('it can be liked', async ({ page }) => {
         await page.getByRole('button', { name: 'View' }).click()
         await page.getByRole('button', { name: 'Like' }).click()
         await expect(page.getByText('Likes 1')).toBeVisible()
       })
 
-      test('a blog can be removed', async ({ page }) => {
+      test('it can be removed', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept())
 
         await page.getByRole('button', { name: 'View' }).click()
         await page.getByRole('button', { name: 'Remove' }).click()
 
         await expect(page.getByText(`'${blog.title}' removed succesfully!`)).toBeVisible()
+      })
+
+      test('it can be removed only if it\'s own', async ({ page, request }) => {
+        await request.post('/api/testing/create')
+        await page.reload()
+
+        const blogEntry = page.locator(':text("How to deal with bad luck")')
+        const expandViewButton = blogEntry.locator(':text("View")')
+
+        await expect(blogEntry).toBeVisible()
+        await expect(expandViewButton).toBeVisible()
+
+        await expandViewButton.click()
+        await expect(blogEntry.locator(':text("Remove")')).toBeHidden()
       })
     })
   })
