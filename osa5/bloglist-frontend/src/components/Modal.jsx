@@ -28,7 +28,7 @@ const Modal = forwardRef((props, ref) => {
   }
 
   return (
-    <div className='container'>
+    <div data-testid='modal-body' className='container'>
       <div className={modalClass}>
         {modalMessage}
       </div>

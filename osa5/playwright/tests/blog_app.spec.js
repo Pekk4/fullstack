@@ -43,4 +43,41 @@ describe('Blog app', () => {
       await expect(page.getByText('Blogs')).toBeHidden()
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByTestId('username').fill('mluukkai')
+      await page.getByTestId('password').fill('salainen')
+
+      await page.getByRole('button').click()
+
+      await page.getByTestId('modal-body').waitFor('hidden')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      const blog = {
+        title: 'Mergehelvetistä Itään',
+        author: 'M. Luukkainen',
+        url: 'https://example.com'
+      }
+
+      await page.getByRole('button', { name: 'New blog' }).click()
+      await page.getByTestId('blog-title').waitFor('visible')
+
+      await page.getByTestId('blog-title').fill(blog.title)
+      await page.getByTestId('blog-author').fill(blog.author)
+      await page.getByTestId('blog-url').fill(blog.url)
+
+      await page.waitForTimeout(500)
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      const modalText = `A new blog '${blog.title}' by '${blog.author}' added!`
+      const modal = page.getByText(modalText)
+
+      await expect(modal).toBeVisible()
+      await modal.waitFor('hidden')
+      await expect(modal).toBeHidden()
+      await expect(page.getByText(blog.title)).toBeVisible()
+    })
+  })
 })
