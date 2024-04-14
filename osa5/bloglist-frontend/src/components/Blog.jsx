@@ -25,7 +25,7 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
     likeHandler(blogBody)
   }
 
-  const deleteBlog = blog => {
+  const deleteBlog = () => {
     deleteHandler(blog)
   }
 
@@ -52,7 +52,7 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
         </div>
         <div>{blog.user.name}</div>
         {blog.user.username === user.username &&
-          <button onClick={() => {deleteBlog(blog)}}>Remove</button>
+          <button onClick={deleteBlog}>Remove</button>
         }
       </div>
     )

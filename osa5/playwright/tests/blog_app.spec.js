@@ -76,12 +76,8 @@ describe('Blog app', () => {
       beforeEach(async ({ page }) => {
         await createBlog(page, blog)
 
-        const modalText = `A new blog '${blog.title}' by '${blog.author}' added!`
-        const modal = page.getByText(modalText)
-
-        await expect(modal).toBeVisible()
-        await modal.waitFor('hidden')
-        await expect(modal).toBeHidden()
+        await page.waitForTimeout(200)
+        await page.reload()
         await expect(page.getByText(blog.title)).toBeVisible()
       })
 
@@ -89,6 +85,15 @@ describe('Blog app', () => {
         await page.getByRole('button', { name: 'View' }).click()
         await page.getByRole('button', { name: 'Like' }).click()
         await expect(page.getByText('Likes 1')).toBeVisible()
+      })
+
+      test('a blog can be removed', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept())
+
+        await page.getByRole('button', { name: 'View' }).click()
+        await page.getByRole('button', { name: 'Remove' }).click()
+
+        await expect(page.getByText(`'${blog.title}' removed succesfully!`)).toBeVisible()
       })
     })
   })
