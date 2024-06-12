@@ -24,7 +24,7 @@ const AnecdoteList = () => {
 
   return (
     <div>
-      {anecdotes
+      {[...anecdotes]
         .sort((a, b) => b.votes > a.votes ? 1 : -1)
         .map(anecdote =>
           <div key={anecdote.id}>
