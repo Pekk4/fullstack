@@ -12,5 +12,15 @@ const notificationSlice = createSlice({
   }
 })
 
+export const flashNotification = (content) => {
+  return dispatch => {
+    dispatch(createNotification(content))
+
+    setTimeout(() => {
+      dispatch(createNotification(''))
+    }, 3000);
+  }
+}
+
 export const { createNotification } = notificationSlice.actions
 export default notificationSlice.reducer
