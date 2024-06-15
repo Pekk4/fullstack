@@ -12,13 +12,13 @@ const notificationSlice = createSlice({
   }
 })
 
-export const flashNotification = (content) => {
+export const setNotification = (content, seconds) => {
   return dispatch => {
     dispatch(createNotification(content))
 
     setTimeout(() => {
       dispatch(createNotification(''))
-    }, 3000);
+    }, seconds * 1000);
   }
 }
 
