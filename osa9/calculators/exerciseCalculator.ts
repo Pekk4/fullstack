@@ -40,7 +40,7 @@ const calculateExercises = (periodHours: number[], targetHours: number): Result 
   } else if (average >= targetHours / 2) {
     rating = 2;
     ratingDescription = 'Well...'
-  } else if (average < targetHours) {
+  } else {
     rating = 1;
     ratingDescription = 'Did you even try?'
   }
