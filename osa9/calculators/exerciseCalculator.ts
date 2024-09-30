@@ -20,11 +20,11 @@ const handleArguments = (args: string[]): Data => {
     return {
       target: Number(args[2]),
       hours: args.slice(3).map(Number)
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 const calculateExercises = (periodHours: number[], targetHours: number): Result => {
   const periodLength = periodHours.length;
@@ -39,10 +39,10 @@ const calculateExercises = (periodHours: number[], targetHours: number): Result 
     ratingDescription = 'GG';
   } else if (average >= targetHours / 2) {
     rating = 2;
-    ratingDescription = 'Well...'
+    ratingDescription = 'Well...';
   } else {
     rating = 1;
-    ratingDescription = 'Did you even try?'
+    ratingDescription = 'Did you even try?';
   }
   
   return {
@@ -53,14 +53,14 @@ const calculateExercises = (periodHours: number[], targetHours: number): Result 
     ratingDescription,
     target: targetHours,
     average
-  }
-}
+  };
+};
 
 try {
   const { target, hours } = handleArguments(process.argv);
   console.log(calculateExercises(hours, target));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened.'
+  let errorMessage = 'Something bad happened.';
   if (error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }
