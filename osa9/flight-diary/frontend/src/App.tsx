@@ -1,36 +1,30 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 
-interface DiaryEntry {
-  id: string;
-  date: string;
-  weather: string;
-  visibility: string;
-}
+import { getAllEntries, createNewEntry } from './services/diaryService';
 
-interface DiaryFormData {
-  date: string;
-  weather: string;
-  visibility: string;
-  comment: string;
-}
+import type { 
+  DiaryEntry,
+  NewDiaryEntry,
+  Weather,
+  Visibility
+} from './types';
 
 const App = () => {
-  const initFormData: DiaryFormData = {
+  const initFormData: NewDiaryEntry = {
     date: '',
-    weather: '',
-    visibility: '',
+    weather: 'sunny',
+    visibility: 'great',
     comment: ''
   };
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [formData, setFormData] = useState<DiaryFormData>(initFormData);
+  const [formData, setFormData] = useState<NewDiaryEntry>(initFormData);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
-    axios.get<DiaryEntry[]>('http://localhost:3000/api/diaries').then(response => {
-      setEntries(response.data)
+    getAllEntries().then(data => {
+      setEntries(data);
     })
-  }, [])
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -44,16 +38,14 @@ const App = () => {
   const entryCreation = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    axios.post<DiaryEntry>('http://localhost:3000/api/diaries', formData)
-      .then(response => {
-        setEntries(entries.concat(response.data));
-        setFormData(initFormData);
-        setErrorMessage('');
-      })
-      .catch(error => {
-        console.error('Error adding entry:', error);
-        setErrorMessage(error.response.data);
-      });
+    createNewEntry(formData).then(data => {
+      setEntries(entries.concat(data));
+      setFormData(initFormData);
+      setErrorMessage('');
+    }).catch(error => {
+      console.error('Error adding entry:', error);
+      setErrorMessage(error.response.data);
+    });
   };
 
   return (
@@ -74,21 +66,33 @@ const App = () => {
         </div>
         <div>
           <label>Weather:</label>
-          <input 
-            type="text"
-            name="weather"
-            value={formData.weather}
-            onChange={handleChange}
-          />
+          {(['sunny', 'rainy', 'cloudy', 'stormy', 'windy'] as Weather[]).map(option => (
+            <label key={option}>
+              <input
+                type="radio"
+                name="weather"
+                value={option}
+                checked={formData.weather === option}
+                onChange={handleChange}
+              />
+              {option}
+            </label>
+          ))}
         </div>
         <div>
           <label>Visibility:</label>
-          <input 
-            type="text"
-            name="visibility"
-            value={formData.visibility}
-            onChange={handleChange}
-          />
+          {(['great', 'good', 'ok', 'poor'] as Visibility[]).map(option => (
+            <label key={option}>
+              <input
+                type="radio"
+                name="visibility"
+                value={option}
+                checked={formData.visibility === option}
+                onChange={handleChange}
+              />
+              {option}
+            </label>
+          ))}
         </div>
         <div>
           <label>Comment:</label>
@@ -107,6 +111,7 @@ const App = () => {
           <h3>{entry.date}</h3>
           <p>Weather: {entry.weather}</p>
           <p>Visibility: {entry.visibility}</p>
+          {entry.comment && <p>Comment: {entry.comment}</p>}
         </div>
       )}
     </div>
