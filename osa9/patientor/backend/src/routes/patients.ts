@@ -7,10 +7,6 @@ import { Patient, NewPatient } from "../types";
 
 const router = express.Router();
 
-router.get('/', (_req, res) => {
-  res.send(patientService.getPatients());
-});
-
 const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   try {
     newPatientSchema.parse(req.body);
@@ -27,6 +23,19 @@ const errorMiddleware = (error: unknown, _req: Request, res: Response, next: Nex
     next(error);
   }
 };
+
+router.get('/', (_req, res) => {
+  res.send(patientService.getPatients());
+});
+
+router.get('/:id', (req: Request<{ id: string }>, res: Response<Patient | { error: string }>) => {
+  const patient = patientService.getPatientById(req.params.id);
+  if (patient) {
+    res.json(patient);
+  } else {
+    res.status(404).send({ error: "Patient not found" });
+  }
+});
 
 router.post('/', newPatientParser, (req: Request<unknown, unknown, NewPatient>, res: Response<Patient | { error: unknown }>) => {
   try {
