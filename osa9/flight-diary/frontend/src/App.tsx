@@ -8,15 +8,23 @@ interface DiaryEntry {
   visibility: string;
 }
 
+interface DiaryFormData {
+  date: string;
+  weather: string;
+  visibility: string;
+  comment: string;
+}
+
 const App = () => {
-  const initFormData = {
+  const initFormData: DiaryFormData = {
     date: '',
     weather: '',
     visibility: '',
     comment: ''
   };
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [formData, setFormData] = useState(initFormData);
+  const [formData, setFormData] = useState<DiaryFormData>(initFormData);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     axios.get<DiaryEntry[]>('http://localhost:3000/api/diaries').then(response => {
@@ -36,24 +44,24 @@ const App = () => {
   const entryCreation = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    const entryToAdd = {
-      id: String(entries.length + 1),
-      ...formData
-    };
-
-    axios.post<DiaryEntry>('http://localhost:3000/api/diaries', entryToAdd)
+    axios.post<DiaryEntry>('http://localhost:3000/api/diaries', formData)
       .then(response => {
         setEntries(entries.concat(response.data));
         setFormData(initFormData);
+        setErrorMessage('');
       })
       .catch(error => {
         console.error('Error adding entry:', error);
+        setErrorMessage(error.response.data);
       });
   };
 
   return (
     <div>
       <h2>Add a new entry</h2>
+      <div id="error-message" style={{ color: 'red' }}>
+        <p>{errorMessage}</p>
+      </div>
       <form onSubmit={entryCreation}>
         <div>
           <label>Date:</label>
