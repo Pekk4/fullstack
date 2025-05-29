@@ -4,9 +4,13 @@ import { Typography, List, ListItem } from "@mui/material";
 
 import patientService from "../services/patients";
 
-import { Patient, Entry } from "../types";
+import { Patient, Entry, Diagnosis } from "../types";
 
-const PatientView = () => {
+interface PatientViewProps {
+  diagnoses: Diagnosis[];
+}
+
+const PatientView = ({ diagnoses }: PatientViewProps) => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
 
@@ -39,7 +43,7 @@ const PatientView = () => {
             <List>
               {entry.diagnosisCodes && entry.diagnosisCodes.map((code: string) => (
                 <ListItem key={code}>
-                  <Typography>{code}</Typography>
+                  <Typography>{code} {diagnoses.find(diagnosis => diagnosis.code === code)?.name}</Typography>
                 </ListItem>
               ))}
             </List>
