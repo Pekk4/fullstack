@@ -1,0 +1,12 @@
+services:
+  todo-frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 5173:5173
+    environment:
+      VITE_BACKEND_URL: http://localhost:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
