@@ -5,13 +5,10 @@ if (process.argv.length<3) {
   process.exit(1)
 }
 
-const password = process.argv[2]
-const url =
-  `mongodb+srv://fullstack3:${password}` +
-  '@fullstack3.ujaoa46.mongodb.net/?retryWrites=true&w=majority'
+const MONGO_URL = process.env.MONGO_URL || undefined
 
 mongoose.set('strictQuery', false)
-mongoose.connect(url)
+mongoose.connect(MONGO_URL)
 
 const recordSchema = new mongoose.Schema({
   name: String,
