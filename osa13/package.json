@@ -8,7 +8,7 @@
   "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon cli.js"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "dotenv": "^17.2.4",
