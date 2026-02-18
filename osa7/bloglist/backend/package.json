@@ -25,7 +25,8 @@
     "dev": "NODE_ENV=development nodemon src/index.js",
     "test": "NODE_ENV=test node --test --test-concurrency=1 src/tests/*.test.js", 
     "start:test": "NODE_ENV=test node src/index.js",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "format": "prettier --write \"src/**/*.js\""
   },
   "author": "Pekka",
   "license": "MIT"
