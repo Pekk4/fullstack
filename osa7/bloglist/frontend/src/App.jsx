@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
 import blogService from './services/blogs';
 import loginService from './services/login';
 import BlogsList from './components/BlogList';
@@ -7,14 +9,14 @@ import LoginForm from './components/LoginForm';
 import Modal from './components/Modal';
 import './index.css';
 import Togglable from './components/Togglable';
+import { showModal } from './reducers/modalReducer';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-
-  const modalRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -47,9 +49,9 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
-      notifyOnChange(`Logged in as '${user.username}'`);
+      dispatch(showModal(`Logged in as '${user.username}'`));
     } catch (error) {
-      notifyOnChange('Wrong username or password!', true);
+      dispatch(showModal('Wrong username or password!', true));
     }
   };
 
@@ -58,14 +60,14 @@ const App = () => {
 
     window.localStorage.removeItem('loggedUser');
     setUser(null);
-    notifyOnChange(`Logged out '${username}'! Goodbye!`);
+    dispatch(showModal(`Logged out '${username}'! Goodbye!`));
   };
 
   const submitBlog = async (newBlog) => {
     const response = await blogService.create(newBlog);
 
     setBlogs(blogs.concat(response));
-    notifyOnChange(`A new blog '${response.title}' by '${response.author}' added!`);
+    dispatch(showModal(`A new blog '${response.title}' by '${response.author}' added!`));
   };
 
   const updateBlog = async (blogBody) => {
@@ -82,7 +84,7 @@ const App = () => {
 
       if (response.status === 204) {
         setBlogs(blogs.filter((b) => b.id !== blog.id));
-        notifyOnChange(`'${blog.title}' removed succesfully!`);
+        dispatch(showModal(`'${blog.title}' removed succesfully!`));
       }
     }
   };
@@ -113,21 +115,9 @@ const App = () => {
     </Togglable>
   );
 
-  const notifyOnChange = (message, isError = false) => {
-    if (isError) {
-      modalRef.current.setStyle(true);
-    }
-
-    modalRef.current.setMessage(message);
-    setTimeout(() => {
-      modalRef.current.setMessage(null);
-      modalRef.current.setStyle(null);
-    }, 3000);
-  };
-
   return (
     <div>
-      <Modal ref={modalRef} />
+      <Modal />
       {!user && getLoginForm()}
       {user && getBlogList()}
       <br />

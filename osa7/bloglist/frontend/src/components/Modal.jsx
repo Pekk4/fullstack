@@ -1,22 +1,8 @@
-import { useState, useImperativeHandle, forwardRef } from 'react';
+import { useSelector } from 'react-redux';
 
-const Modal = forwardRef((props, ref) => {
-  const [modalMessage, setmodalMessage] = useState(null);
-  const [modalStyle, setmodalStyle] = useState(null);
-
-  const setMessage = (message) => {
-    setmodalMessage(message);
-  };
-  const setStyle = (style) => {
-    setmodalStyle(style);
-  };
-
-  useImperativeHandle(ref, () => {
-    return {
-      setMessage,
-      setStyle,
-    };
-  });
+const Modal = () => {
+  const modalMessage = useSelector((state) => state.modal.message);
+  const modalStyle = useSelector((state) => state.modal.style);
 
   let modalClass = 'modal green';
 
@@ -32,8 +18,6 @@ const Modal = forwardRef((props, ref) => {
       <div className={modalClass}>{modalMessage}</div>
     </div>
   );
-});
-
-Modal.displayName = 'Modal';
+};
 
 export default Modal;
