@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -8,19 +8,19 @@ import BlogForm from './components/BlogForm';
 import LoginForm from './components/LoginForm';
 import Modal from './components/Modal';
 import './index.css';
-import Togglable from './components/Togglable';
 import { showModal } from './reducers/modalReducer';
+import { fetchBlogs } from './reducers/blogReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    dispatch(fetchBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -63,17 +63,10 @@ const App = () => {
     dispatch(showModal(`Logged out '${username}'! Goodbye!`));
   };
 
-  const submitBlog = async (newBlog) => {
-    const response = await blogService.create(newBlog);
-
-    setBlogs(blogs.concat(response));
-    dispatch(showModal(`A new blog '${response.title}' by '${response.author}' added!`));
-  };
-
   const updateBlog = async (blogBody) => {
-    const response = await blogService.update(blogBody);
+    await blogService.update(blogBody);
 
-    setBlogs(blogs.map((blog) => (blog.id !== response.id ? blog : response)));
+    dispatch(fetchBlogs());
   };
 
   const deleteBlog = async (blog) => {
@@ -83,7 +76,7 @@ const App = () => {
       const response = await blogService.deleteBlog(blog.id);
 
       if (response.status === 204) {
-        setBlogs(blogs.filter((b) => b.id !== blog.id));
+        dispatch(fetchBlogs());
         dispatch(showModal(`'${blog.title}' removed succesfully!`));
       }
     }
@@ -109,19 +102,13 @@ const App = () => {
     />
   );
 
-  const getBlogForm = () => (
-    <Togglable buttonLabel="New blog">
-      <BlogForm createBlog={submitBlog} />
-    </Togglable>
-  );
-
   return (
     <div>
       <Modal />
       {!user && getLoginForm()}
       {user && getBlogList()}
       <br />
-      {user && getBlogForm()}
+      {user && <BlogForm />}
     </div>
   );
 };
