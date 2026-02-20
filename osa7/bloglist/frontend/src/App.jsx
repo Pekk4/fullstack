@@ -63,25 +63,6 @@ const App = () => {
     dispatch(showModal(`Logged out '${username}'! Goodbye!`));
   };
 
-  const updateBlog = async (blogBody) => {
-    await blogService.update(blogBody);
-
-    dispatch(fetchBlogs());
-  };
-
-  const deleteBlog = async (blog) => {
-    const confirm = `Remove blog '${blog.title}' by '${blog.author}'?`;
-
-    if (window.confirm(confirm)) {
-      const response = await blogService.deleteBlog(blog.id);
-
-      if (response.status === 204) {
-        dispatch(fetchBlogs());
-        dispatch(showModal(`'${blog.title}' removed succesfully!`));
-      }
-    }
-  };
-
   const getLoginForm = () => (
     <LoginForm
       username={username}
@@ -92,15 +73,7 @@ const App = () => {
     />
   );
 
-  const getBlogList = () => (
-    <BlogsList
-      user={user}
-      logoutHandler={handleLogout}
-      blogs={blogs}
-      likeHandler={updateBlog}
-      deleteHandler={deleteBlog}
-    />
-  );
+  const getBlogList = () => <BlogsList user={user} logoutHandler={handleLogout} blogs={blogs} />;
 
   return (
     <div>

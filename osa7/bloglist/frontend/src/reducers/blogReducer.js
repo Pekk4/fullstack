@@ -39,4 +39,27 @@ export const createBlog = (newBlog) => {
   };
 };
 
+export const updateBlog = (blogBody) => {
+  return async (dispatch) => {
+    await blogService.update(blogBody);
+
+    dispatch(fetchBlogs());
+  };
+};
+
+export const deleteBlog = (blog) => {
+  return async (dispatch) => {
+    const confirm = `Remove blog '${blog.title}' by '${blog.author}'?`;
+
+    if (window.confirm(confirm)) {
+      const response = await blogService.deleteBlog(blog.id);
+
+      if (response.status === 204) {
+        dispatch(fetchBlogs());
+        dispatch(showModal(`'${blog.title}' removed succesfully!`));
+      }
+    }
+  };
+};
+
 export default blogsSlice.reducer;
