@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { updateBlog, deleteBlog } from '../reducers/blogReducer';
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog }) => {
   const [detailedView, setDetailedView] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
   const blogStyle = {
     padding: 10,
     border: 'solid',
@@ -55,7 +57,9 @@ const Blog = ({ blog, user }) => {
             Likes {blog.likes} <button onClick={addLike}>Like</button>
           </div>
           <div>{blog.user.name}</div>
-          {blog.user.username === user.username && <button onClick={deleteHandler}>Remove</button>}
+          {user && blog.user.username === user.username && (
+            <button onClick={deleteHandler}>Remove</button>
+          )}
         </div>
       </div>
     );

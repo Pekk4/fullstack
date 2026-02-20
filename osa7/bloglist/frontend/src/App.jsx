@@ -1,85 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import blogService from './services/blogs';
-import loginService from './services/login';
 import BlogsList from './components/BlogList';
 import BlogForm from './components/BlogForm';
 import LoginForm from './components/LoginForm';
 import Modal from './components/Modal';
 import './index.css';
-import { showModal } from './reducers/modalReducer';
 import { fetchBlogs } from './reducers/blogReducer';
+import { initUser } from './reducers/userReducer';
 
 const App = () => {
-  const blogs = useSelector((state) => state.blogs);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(initUser());
     dispatch(fetchBlogs());
   }, [dispatch]);
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser');
-
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-
-      if (user) {
-        window.localStorage.setItem('loggedUser', JSON.stringify(user));
-      }
-
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername('');
-      setPassword('');
-      dispatch(showModal(`Logged in as '${user.username}'`));
-    } catch (error) {
-      dispatch(showModal('Wrong username or password!', true));
-    }
-  };
-
-  const handleLogout = () => {
-    const username = user.username;
-
-    window.localStorage.removeItem('loggedUser');
-    setUser(null);
-    dispatch(showModal(`Logged out '${username}'! Goodbye!`));
-  };
-
-  const getLoginForm = () => (
-    <LoginForm
-      username={username}
-      usernameHandler={setUsername}
-      password={password}
-      passwordHandler={setPassword}
-      loginHandler={handleLogin}
-    />
-  );
-
-  const getBlogList = () => <BlogsList user={user} logoutHandler={handleLogout} blogs={blogs} />;
 
   return (
     <div>
       <Modal />
-      {!user && getLoginForm()}
-      {user && getBlogList()}
+      {!user && <LoginForm />}
+      {user && <BlogsList />}
       <br />
       {user && <BlogForm />}
     </div>
