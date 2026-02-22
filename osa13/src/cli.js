@@ -1,5 +1,9 @@
 require('dotenv').config();
 const { Sequelize, Model, DataTypes } = require('sequelize');
+const express = require('express');
+const app = express();
+
+app.use(express.json());
 
 const sequelize = new Sequelize(process.env.DATABASE_URL);
 
@@ -36,10 +40,43 @@ Blog.init(
   }
 );
 
-Blog.findAll().then((blogs) =>
-  blogs.forEach((blog) =>
-    console.log(
-      `${blog.dataValues.author}: '${blog.dataValues.title}', ${blog.dataValues.likes} likes`
-    )
-  )
-);
+Blog.sync();
+
+app.get('/api/blogs', async (_, res) => {
+  const blogs = await Blog.findAll();
+
+  console.log(JSON.stringify(blogs, null, 2));
+  res.json(blogs);
+});
+
+app.post('/api/blogs', async (req, res) => {
+  try {
+    const newBlog = await Blog.create(req.body);
+
+    res.json(newBlog);
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+});
+
+app.delete('/api/blogs/:id', async (req, res) => {
+  try {
+    const blogToDelete = await Blog.findByPk(req.params.id);
+
+    if (blogToDelete) {
+      await blogToDelete.destroy();
+
+      res.json({ message: 'Blog deleted' });
+    } else {
+      return res.status(404).end();
+    }
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
