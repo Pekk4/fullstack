@@ -5,12 +5,12 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "cli.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/cli.js",
+    "start": "node src/index.js",
     "format": "prettier --write \"src/**/*.js\"",
-    "dev": "nodemon src/cli.js"
+    "dev": "nodemon src/index.js"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
