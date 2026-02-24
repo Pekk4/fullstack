@@ -28,19 +28,23 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.delete('/api/blogs/:id', async (req, res) => {
-  try {
-    const blogToDelete = await Blog.findByPk(req.params.id);
+router.delete('/:id', blogFinder, async (req, res) => {
+  if (req.blog) {
+    await req.blog.destroy();
+  }
 
-    if (blogToDelete) {
-      await blogToDelete.destroy();
+  res.status(204).end();
+});
 
-      res.json({ message: 'Blog deleted' });
-    } else {
-      return res.status(404).end();
-    }
-  } catch (error) {
-    return res.status(400).json({ error });
+router.put('/:id', blogFinder, async (req, res) => {
+  if (req.blog) {
+    req.blog.likes = req.body.likes;
+
+    await req.blog.save();
+
+    res.json(req.blog);
+  } else {
+    res.status(404).end();
   }
 });
 
