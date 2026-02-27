@@ -15,7 +15,7 @@ Blog.init(
       type: DataTypes.TEXT,
     },
     url: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     title: {
@@ -24,7 +24,7 @@ Blog.init(
     },
     likes: {
       type: DataTypes.INTEGER,
-      default: 0,
+      defaultValue: 0,
     },
   },
   {
