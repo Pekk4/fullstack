@@ -2,7 +2,6 @@ const router = require('express').Router();
 
 const { User, Blog } = require('../models');
 
-// 13.12 was accidentally done already in 13.10
 router.get('/', async (_, res) => {
   const users = await User.findAll({
     include: {
