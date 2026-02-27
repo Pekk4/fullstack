@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const { Blog, User } = require('../models');
-const { blogFinder, tokenExtractor } = require('../utils/middleware');
+const { blogFinder, userExtractor } = require('../utils/middleware');
 
 router.get('/', async (_, res) => {
   const blogs = await Blog.findAll({
@@ -15,10 +15,9 @@ router.get('/', async (_, res) => {
   res.json(blogs);
 });
 
-router.post('/', tokenExtractor, async (req, res, next) => {
+router.post('/', userExtractor, async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.decodedToken.id);
-    const newBlog = await Blog.create({ ...req.body, userId: user.id });
+    const newBlog = await Blog.create({ ...req.body, userId: req.user.id });
 
     res.json(newBlog);
   } catch (error) {
@@ -26,9 +25,11 @@ router.post('/', tokenExtractor, async (req, res, next) => {
   }
 });
 
-router.delete('/:id', blogFinder, async (req, res) => {
-  if (req.blog) {
+router.delete('/:id', blogFinder, userExtractor, async (req, res) => {
+  if (req.blog && req.blog.userId === req.user.id) {
     await req.blog.destroy();
+  } else {
+    return res.status(401).end();
   }
 
   res.status(204).end();
