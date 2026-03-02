@@ -22,16 +22,25 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.put('/:username', async (req, res) => {
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
   const user = await User.findOne({
-    where: {
-      username: req.params.username,
-    },
+    where: { id },
+    include: [
+      {
+        model: Blog,
+        as: 'blogs',
+      },
+      {
+        model: Blog,
+        as: 'readings',
+        through: { attributes: [] },
+        attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
+      },
+    ],
   });
 
   if (user) {
-    user.set(req.body);
-    await user.save();
     res.json(user);
   } else {
     res.status(404).end();
