@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const List = require('../models/list');
+const { userExtractor } = require('../utils/middleware');
 
 router.get('/', async (_, res) => {
   const lists = await List.findAll({});
@@ -19,6 +20,28 @@ router.post('/', async (req, res) => {
     } catch (error) {
       next(error);
     }
+  }
+});
+
+router.put('/:id', userExtractor, async (req, res, next) => {
+  try {
+    const list = await List.findByPk(req.params.id);
+
+    if (!list) {
+      return res.status(404).end();
+    }
+
+    if (list.userId !== req.user.id) {
+      return res.status(401).end();
+    }
+
+    list.read = req.body.read;
+
+    await list.save();
+
+    res.json(list);
+  } catch (error) {
+    next(error);
   }
 });
 
