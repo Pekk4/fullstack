@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const List = require('../models/list');
-const { userExtractor } = require('../utils/middleware');
+const { sessionExtractor } = require('../utils/middleware');
 
 router.get('/', async (_, res) => {
   const lists = await List.findAll({});
@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', userExtractor, async (req, res, next) => {
+router.put('/:id', sessionExtractor, async (req, res, next) => {
   try {
     const list = await List.findByPk(req.params.id);
 

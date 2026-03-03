@@ -11,6 +11,7 @@ const loginRouter = require('./controllers/login');
 const authorsRouter = require('./controllers/authors');
 const testingRouter = require('./controllers/testing');
 const listRouter = require('./controllers/lists');
+const logoutRouter = require('./controllers/logout');
 
 app.use(express.json());
 
@@ -19,6 +20,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/authors', authorsRouter);
 app.use('/api/readinglists', listRouter);
+app.use('/api/logout', logoutRouter);
 
 if (process.env.NODE_ENV === 'test') {
   app.use('/api/reset', testingRouter);

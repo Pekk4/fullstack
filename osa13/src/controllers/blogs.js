@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { Op } = require('sequelize');
 
 const { Blog, User } = require('../models');
-const { blogFinder, userExtractor } = require('../utils/middleware');
+const { blogFinder, sessionExtractor } = require('../utils/middleware');
 
 router.get('/', async (req, res) => {
   let where = {};
@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
   res.json(blogs);
 });
 
-router.post('/', userExtractor, async (req, res, next) => {
+router.post('/', sessionExtractor, async (req, res, next) => {
   try {
     const newBlog = await Blog.create({ ...req.body, userId: req.user.id });
 
@@ -47,7 +47,7 @@ router.post('/', userExtractor, async (req, res, next) => {
   }
 });
 
-router.delete('/:id', blogFinder, userExtractor, async (req, res) => {
+router.delete('/:id', blogFinder, sessionExtractor, async (req, res) => {
   if (req.blog && req.blog.userId === req.user.id) {
     await req.blog.destroy();
   } else {
@@ -57,15 +57,19 @@ router.delete('/:id', blogFinder, userExtractor, async (req, res) => {
   res.status(204).end();
 });
 
-router.put('/:id', blogFinder, async (req, res, next) => {
-  try {
-    req.blog.likes = req.body.likes;
+router.put('/:id', blogFinder, sessionExtractor, async (req, res, next) => {
+  if (req.blog && req.blog.userId === req.user.id) {
+    try {
+      req.blog.likes = req.body.likes;
 
-    await req.blog.save();
+      await req.blog.save();
 
-    res.json(req.blog);
-  } catch (error) {
-    return next(error);
+      res.json(req.blog);
+    } catch (error) {
+      return next(error);
+    }
+  } else {
+    return res.status(401).end();
   }
 });
 

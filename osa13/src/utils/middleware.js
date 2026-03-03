@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const { Blog, User } = require('../models');
+const { Blog, User, Session } = require('../models');
 const { SECRET } = require('./config');
 
 const blogFinder = async (req, res, next) => {
@@ -60,8 +60,36 @@ const userExtractor = async (req, res, next) => {
   }
 };
 
+const sessionExtractor = async (req, res, next) => {
+  const authorization = req.get('authorization');
+
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    try {
+      const session = await Session.findOne({
+        where: { token: authorization.substring(7) },
+        include: {
+          model: User,
+        },
+      });
+
+      if (!session) {
+        return res.status(401).json({ error: 'session invalid' });
+      }
+
+      req.user = session.user;
+
+      next();
+    } catch (error) {
+      return res.status(401).json({ error: 'session invalid' });
+    }
+  } else {
+    return res.status(401).json({ error: 'token missing' });
+  }
+};
+
 module.exports = {
   blogFinder,
   errorHandler,
   userExtractor,
+  sessionExtractor,
 };
