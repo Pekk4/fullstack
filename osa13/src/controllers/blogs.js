@@ -57,19 +57,15 @@ router.delete('/:id', blogFinder, sessionExtractor, async (req, res) => {
   res.status(204).end();
 });
 
-router.put('/:id', blogFinder, sessionExtractor, async (req, res, next) => {
-  if (req.blog && req.blog.userId === req.user.id) {
-    try {
-      req.blog.likes = req.body.likes;
+router.put('/:id', blogFinder, async (req, res, next) => {
+  try {
+    req.blog.likes = req.body.likes;
 
-      await req.blog.save();
+    await req.blog.save();
 
-      res.json(req.blog);
-    } catch (error) {
-      return next(error);
-    }
-  } else {
-    return res.status(401).end();
+    res.json(req.blog);
+  } catch (error) {
+    return next(error);
   }
 });
 

@@ -32,6 +32,8 @@ const errorHandler = (error, _, res, next) => {
     }
   } else if (error.name === 'SequelizeDatabaseError') {
     return res.status(400).json({ error: error.message });
+  } else if (error.name === 'SequelizeForeignKeyConstraintError') {
+    return res.status(404).json({ error: error.message });
   }
 
   next(error);

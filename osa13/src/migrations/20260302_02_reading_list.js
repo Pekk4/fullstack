@@ -24,8 +24,14 @@ module.exports = {
         references: { model: 'blogs', key: 'id' },
       },
     });
+    await queryInterface.addConstraint('lists', {
+      fields: ['user_id', 'blog_id'],
+      type: 'unique',
+      name: 'unique_user_blog_constraint',
+    });
   },
   down: async ({ context: queryInterface }) => {
+    await queryInterface.removeConstraint('lists', 'unique_user_blog_constraint');
     await queryInterface.dropTable('lists');
   },
 };

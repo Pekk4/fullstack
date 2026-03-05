@@ -32,6 +32,12 @@ List.init(
     underscored: true,
     timestamps: false,
     modelName: 'list',
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_id', 'blog_id'],
+      },
+    ],
   }
 );
 

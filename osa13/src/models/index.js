@@ -3,13 +3,13 @@ const User = require('./user');
 const List = require('./list');
 const Session = require('./session');
 
-User.hasMany(Blog);
-Blog.belongsTo(User);
+User.hasMany(Blog, { onDelete: 'CASCADE' });
+Blog.belongsTo(User, { onDelete: 'CASCADE' });
 
-Blog.belongsToMany(User, { through: List, as: 'readers' });
-User.belongsToMany(Blog, { through: List, as: 'readings' });
+Blog.belongsToMany(User, { through: List, as: 'readers', onDelete: 'CASCADE' });
+User.belongsToMany(Blog, { through: List, as: 'readings', onDelete: 'CASCADE' });
 
-Session.belongsTo(User);
+Session.belongsTo(User, { onDelete: 'CASCADE' });
 User.hasOne(Session);
 
 module.exports = {

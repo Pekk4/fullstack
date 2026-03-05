@@ -9,7 +9,7 @@ router.get('/', async (_, res) => {
   res.json(lists);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   if (typeof req.body.userId !== 'number' || typeof req.body.blogId !== 'number') {
     return res.status(400).json({ error: 'userId and blogId must be numbers' });
   } else {
