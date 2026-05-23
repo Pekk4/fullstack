@@ -12,7 +12,20 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     bookCount: async () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      return Book.find({}).populate('author')
+      const query = {}
+
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author })
+
+        if (author) {
+          query.author = author._id
+        }
+      }
+      if (args.genre) {
+        query.genres = args.genre
+      }
+
+      return Book.find(query).populate('author')
     },
     allAuthors: async (root, args) => {
       return Author.find({})
@@ -132,7 +145,16 @@ const resolvers = {
       }
 
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
-    }
+    },
+    _resetDatabase: async () => {
+      if (process.env.NODE_ENV !== 'test') {
+        throw new GraphQLError('_resetDatabase is only available in test mode')
+      }
+      await Author.deleteMany({})
+      await Book.deleteMany({})
+      await User.deleteMany({})
+      return true
+    },
   }
 }
 
