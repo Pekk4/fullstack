@@ -5,6 +5,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
+import Favorites from './components/Favorites'
 import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         {token && (
           <>
             <button onClick={() => setPage('add')}>add book</button>
+            <button onClick={() => setPage('recommend')}>recommend</button>
             <button onClick={() => {
               setToken(null)
               localStorage.clear()
@@ -46,6 +48,8 @@ const App = () => {
       {page === 'login' && (
         <LoginForm setToken={setToken} setPage={setPage} />
       )}
+
+      <Favorites show={page === 'recommend'} />
     </div>
   )
 }
