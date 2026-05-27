@@ -46,11 +46,12 @@ const Authors = (props) => {
           </tbody>
         </table>
       </div>
+      {props.token && (
       <div>
-        <h2>Set birth year</h2>
-        <form onSubmit={submit}>
-          <div>
-            name
+          <h2>Set birth year</h2>
+          <form onSubmit={submit}>
+            <div>
+              name
             <select value={name} onChange={({ target }) => setName(target.value)}>
               <option value="">select author</option>
               {authors.map((a) => (
@@ -71,6 +72,7 @@ const Authors = (props) => {
           <button type="submit">update author</button>
         </form>
       </div>
+      )}
     </div>
   )
 }
