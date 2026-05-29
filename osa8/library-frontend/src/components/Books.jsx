@@ -22,6 +22,7 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
+      {genre && <p>in genre <strong>{genre}</strong></p>}
       <table>
         <tbody>
           <tr>
@@ -38,13 +39,13 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-      <select value={genre} onChange={({ target }) => setGenre(target.value)}>
+      <div>
         {genres.map((g) => (
-          <option key={g} value={g}>
+          <button key={g} onClick={() => setGenre(g)}>
             {g || 'all genres'}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
     </div>
   )
 }

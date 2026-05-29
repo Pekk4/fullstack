@@ -49,7 +49,7 @@ const App = () => {
         <LoginForm setToken={setToken} setPage={setPage} />
       )}
 
-      <Favorites show={page === 'recommend'} />
+      {token && <Favorites show={page === 'recommend'} />}
     </div>
   )
 }
